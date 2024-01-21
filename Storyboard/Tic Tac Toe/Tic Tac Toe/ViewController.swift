@@ -15,6 +15,7 @@ class ViewController: UIViewController {
     var activeGame = true
     
     
+    @IBOutlet weak var WinningView: UIView!
     @IBOutlet weak var winningStatus: UILabel!
     @IBOutlet weak var playAgainBtn: UIButton!
     
@@ -29,6 +30,7 @@ class ViewController: UIViewController {
         }
         self.winningStatus.isHidden = true
         self.playAgainBtn.isHidden = true
+        self.WinningView.isHidden = true
     }
     
     @IBAction func buttonPressed(_ sender: UIButton) {
@@ -50,6 +52,7 @@ class ViewController: UIViewController {
                 
                 self.winningStatus.isHidden = false
                 self.playAgainBtn.isHidden = false
+                self.WinningView.isHidden = false
                 
                 if gameState[combination[0]] == 1{
                     self.winningStatus.text = "Nought won"
@@ -71,6 +74,9 @@ class ViewController: UIViewController {
         
         self.winningStatus.isHidden = true
         self.playAgainBtn.isHidden = true
+        self.WinningView.isHidden = true
+        self.WinningView.layer.borderColor = CGColor(red: 0, green: 0, blue: 0, alpha: 1)
+        self.WinningView.layer.borderWidth = 5.0
         self.winningStatus.text = ""
         self.winningStatus.alpha = 0
         self.playAgainBtn.alpha = 0
