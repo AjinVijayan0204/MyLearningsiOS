@@ -26,6 +26,11 @@ class ViewController: UIViewController {
         locManager.desiredAccuracy = kCLLocationAccuracyBest
         locManager.requestWhenInUseAuthorization()
         locManager.startUpdatingLocation()
+        
+        //gesture
+        let longPressInteraction = UILongPressGestureRecognizer(target: self, action: #selector(ViewController.longPress(gestureRecogniser:)))
+        longPressInteraction.minimumPressDuration = 2
+        mapView.addGestureRecognizer(longPressInteraction)
     }
 
 }
@@ -74,3 +79,20 @@ extension ViewController: CLLocationManagerDelegate{
         }
     }
 }
+
+
+//for gesture recognition
+
+extension ViewController{
+    
+    @objc func longPress(gestureRecogniser: UIGestureRecognizer){
+        let touchPoint = gestureRecogniser.location(in: self.mapView)
+        let coordinate = mapView.convert(touchPoint, toCoordinateFrom: self.mapView)
+        let annotation = MKPointAnnotation()
+        annotation.title = "Wish loc"
+        annotation.coordinate = coordinate
+        mapView.addAnnotation(annotation)
+    }
+}
+
+
