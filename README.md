@@ -20,8 +20,9 @@ SwiftUI
 Gestures
         eg: let uilpr = UILongPressGestureRecognizer(target: self, action: #selector(ViewController.longPressRecongition(gesture:)))
             uilpr.minimumPressDuration = 2
-            self.mapView.addGestureRecognizer(uilpr)
-            
+            self.mapView.addGestureRecognizer(up)
+
+LOCATION
 Maps
     let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
     let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
