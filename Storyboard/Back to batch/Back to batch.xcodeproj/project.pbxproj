@@ -13,6 +13,8 @@
 		87413B312B60C999003068CD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 87413B2F2B60C999003068CD /* Main.storyboard */; };
 		87413B332B60C99A003068CD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 87413B322B60C99A003068CD /* Assets.xcassets */; };
 		87413B362B60C99A003068CD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 87413B342B60C99A003068CD /* LaunchScreen.storyboard */; };
+		87413B3F2B60CE66003068CD /* bach.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 87413B3D2B60CE66003068CD /* bach.jpg */; };
+		87413B402B60CE66003068CD /* sheep.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 87413B3E2B60CE66003068CD /* sheep.mp3 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,8 @@
 		87413B322B60C99A003068CD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		87413B352B60C99A003068CD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		87413B372B60C99A003068CD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		87413B3D2B60CE66003068CD /* bach.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = bach.jpg; path = ../../../../../Downloads/bach.jpg; sourceTree = "<group>"; };
+		87413B3E2B60CE66003068CD /* sheep.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = sheep.mp3; path = ../../../../../Downloads/sheep.mp3; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +67,8 @@
 				87413B322B60C99A003068CD /* Assets.xcassets */,
 				87413B342B60C99A003068CD /* LaunchScreen.storyboard */,
 				87413B372B60C99A003068CD /* Info.plist */,
+				87413B3D2B60CE66003068CD /* bach.jpg */,
+				87413B3E2B60CE66003068CD /* sheep.mp3 */,
 			);
 			path = "Back to batch";
 			sourceTree = "<group>";
@@ -125,7 +131,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				87413B402B60CE66003068CD /* sheep.mp3 in Resources */,
 				87413B362B60C99A003068CD /* LaunchScreen.storyboard in Resources */,
+				87413B3F2B60CE66003068CD /* bach.jpg in Resources */,
 				87413B332B60C99A003068CD /* Assets.xcassets in Resources */,
 				87413B312B60C999003068CD /* Main.storyboard in Resources */,
 			);
