@@ -46,6 +46,7 @@
             self.mapView.addAnnotation(createAnnotation(title: "new", for: location!.coordinate))
 
 # Get location from mapview 
+
     eg: by using CLGeocoder and its reverseGeocodeLocation
         if gesture.state == UIGestureRecognizer.State.began{
             let touchPoint = gesture.location(in: self.mapView)
@@ -55,6 +56,7 @@
             CLGeocoder().reverseGeocodeLocation(location) { placemark, error in
             }
         }
+
     
 # Saving to document directory
     eg:
@@ -70,11 +72,10 @@
             return filename
         }
 
-# Saving and retreiving image from document
-    eg:
-    //saving
-    let imgData = image.jpegData(compressionQuality: 1)
-    try imgData.write(to: fileName)
+# Saving and retreiving data from directory
+    eg: Saving
+        let imgData = image.jpegData(compressionQuality: 1)
+        try imgData.write(to: fileName)
+    eg: retreiving
+        let imgData = try Data(contentsOf: fileName)
 
-    //retreiving
-    let imgData = try Data(contentsOf: fileName)
