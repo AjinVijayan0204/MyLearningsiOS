@@ -79,3 +79,12 @@
     eg: retreiving
         let imgData = try Data(contentsOf: fileName)
 
+# JSON encoding
+    eg:
+    let finalData = try JSONDecoder().decode(JSONResponse.self, from: data)
+    //JSON Model
+    struct JSONResponse: Codable{
+        let name: String
+        let main: Main
+        let weather: [Weather]
+    }
