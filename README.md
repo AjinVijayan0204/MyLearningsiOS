@@ -88,3 +88,44 @@
         let main: Main
         let weather: [Weather]
     }
+
+#  Adding pod
+    1. pod init
+    2. add the neccessary pods
+    3. pod install
+    4. if this error comes
+    File not found: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/arc/libarclite_iphonesimulator.a
+    post_install do |installer|
+        installer.generated_projects.each do |project|
+            project.targets.each do |target|
+                target.build_configurations.each do |config|
+                    config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+                end
+            end
+        end
+    end
+
+# Asynchronous function
+    1. Using completion handlers
+    eg:
+    func getFollowers(for userId: String, completion: @escaping([String]) -> ()){
+        var followerList: [String] = []
+        if let user = Auth.auth().currentUser{
+            let key = "/users/\(userId)/followers"
+            ref.child(key).getData { error, snapshot in
+                let data = snapshot?.value
+                if let data = data, var followers = data as? NSArray{
+                    followerList = followers.map { follower in
+                        return follower as! String
+                    }
+                    //calling on completion
+                    completion(followerList)
+                }
+            }
+        }
+    }
+
+    //calling
+    getFollowers(for: userId) { followers in
+               
+    }
