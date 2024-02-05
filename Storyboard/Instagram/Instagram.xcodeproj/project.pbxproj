@@ -26,6 +26,7 @@
 		8746A8642B6F5924004ADC69 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 8746A8632B6F5924004ADC69 /* FirebaseFirestore */; };
 		8746A8662B6F5924004ADC69 /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 8746A8652B6F5924004ADC69 /* FirebaseFirestoreSwift */; };
 		8746A8682B6F5924004ADC69 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 8746A8672B6F5924004ADC69 /* FirebaseStorage */; };
+		87501B4A2B71533400726DAD /* PostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87501B492B71533400726DAD /* PostViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +63,7 @@
 		8746A8492B6E4FA0004ADC69 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		8746A84B2B6E6BF6004ADC69 /* UserTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserTableViewController.swift; sourceTree = "<group>"; };
 		8746A84D2B6EAED3004ADC69 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		87501B492B71533400726DAD /* PostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +131,7 @@
 				8746A84D2B6EAED3004ADC69 /* GoogleService-Info.plist */,
 				8746A8492B6E4FA0004ADC69 /* Utilities.swift */,
 				8746A84B2B6E6BF6004ADC69 /* UserTableViewController.swift */,
+				87501B492B71533400726DAD /* PostViewController.swift */,
 			);
 			path = Instagram;
 			sourceTree = "<group>";
@@ -294,6 +297,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				87501B4A2B71533400726DAD /* PostViewController.swift in Sources */,
 				8746A84C2B6E6BF6004ADC69 /* UserTableViewController.swift in Sources */,
 				874319C02B6D52C800DE2AEE /* ViewController.swift in Sources */,
 				874319BC2B6D52C800DE2AEE /* AppDelegate.swift in Sources */,

@@ -165,18 +165,52 @@
         <!--Post-->
         <scene sceneID="AJF-IV-0vu">
             <objects>
-                <viewController id="kix-fd-23v" sceneMemberID="viewController">
+                <viewController id="kix-fd-23v" customClass="PostViewController" customModule="Instagram" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Lsb-tM-TlX">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DDn-gR-KN6">
+                                <rect key="frame" x="16" y="126" width="361" height="251"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VfH-33-Z2U">
+                                <rect key="frame" x="119" y="409" width="156" height="35"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Choose an image"/>
+                                <connections>
+                                    <action selector="chooseImageBtn:" destination="kix-fd-23v" eventType="touchUpInside" id="dzD-SR-1tE"/>
+                                </connections>
+                            </button>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Add a comment" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="9VN-9e-VHX">
+                                <rect key="frame" x="16" y="463" width="361" height="34"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="m0z-Zo-AHb">
+                                <rect key="frame" x="169" y="531" width="58" height="35"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="gray" title="Post"/>
+                                <connections>
+                                    <action selector="postButton:" destination="kix-fd-23v" eventType="touchUpInside" id="eIF-er-WfK"/>
+                                </connections>
+                            </button>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="bNK-ei-r0K"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
                     <navigationItem key="navigationItem" title="Post" id="JAu-Wv-DGh"/>
+                    <connections>
+                        <outlet property="commentTextField" destination="9VN-9e-VHX" id="yQb-CX-Eup"/>
+                        <outlet property="imageOutlet" destination="DDn-gR-KN6" id="0lR-dU-zTF"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cci-0F-pKb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2639" y="-252"/>
+            <point key="canvasLocation" x="2638.9312977099235" y="-252.11267605633805"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="jJX-10-efD">
