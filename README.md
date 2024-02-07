@@ -129,3 +129,31 @@
     getFollowers(for: userId) { followers in
                
     }
+
+# Select image (PHPicker)
+
+        var configuration = PHPickerConfiguration()
+        configuration.selectionLimit = 1
+        configuration.filter = .images
+        let pickerVC = PHPickerViewController(configuration: configuration)
+        pickerVC.delegate = self
+        self.present(pickerVC, animated: true)
+
+        extension PostViewController: PHPickerViewControllerDelegate{
+            func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+                self.dismiss(animated: true)
+                if let itemprovider = results.first?.itemProvider{
+                    if itemprovider.canLoadObject(ofClass: UIImage.self){
+                        itemprovider.loadObject(ofClass: UIImage.self) { image, error in
+                            if let error = error{
+                                print("Error in loading image")
+                            }else if let selectedImage = image as? UIImage{
+                                DispatchQueue.main.async {
+                                    self.imageOutlet.image = selectedImage
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
