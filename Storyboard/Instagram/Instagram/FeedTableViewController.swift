@@ -1,0 +1,205 @@
+//
+//  FeedTableViewController.swift
+//  Instagram
+//
+//  Created by Ajin on 06/02/24.
+//
+
+import UIKit
+import FirebaseDatabase
+import FirebaseStorage
+
+class FeedTableViewController: UITableViewController {
+
+    let ref: DatabaseReference = Database.database().reference()
+    let storageRef = Storage.storage().reference()
+    
+    var postsKeys: [String] = []
+    var finalPostData: [String: String] = [:]
+    var postsKeysSrc: [String]{
+        return finalPostData.keys.sorted()
+    }
+    
+    var posts: [String] = []
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // Uncomment the following line to preserve selection between presentations
+        // self.clearsSelectionOnViewWillAppear = false
+
+        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
+        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        getPosts()
+    }
+
+    // MARK: - Functions
+    func getPosts(){
+        ref.child("posts").getData { error, snapshot in
+            if let error = error{
+                print(error)
+            }
+            if let snapshot = snapshot{
+                if let datas = snapshot.value as? NSDictionary{
+                    self.postsKeys = datas.allKeys.map { key in
+                        guard let key = key as? String else { return "" }
+                        self.getPostKeys(id: key)
+                        return key
+                    }
+                    self.tableView.reloadData()
+                }
+            }
+            
+        }
+    }
+    
+    func getPostKeys(id: String){
+        ref.child("posts").child(id).getData { error, snapshot in
+            if let error = error{
+                print(error)
+            }
+            if let snapshot = snapshot{
+                if let datas = snapshot.value as? NSDictionary{
+                    for key in datas.allKeys{
+                        if let key = key as? String{
+                            self.finalPostData[key] = id
+                        }
+                    }
+                    self.tableView.reloadData()
+                }
+            }
+        }
+    }
+    
+    func getComment(id: String, key: String, completion: @escaping (String)-> ()){
+        ref.child("posts").child(id).child(key).child("comment").getData { error, snapshot in
+            if let error = error{
+                print(error)
+            }
+            if let snapshot = snapshot{
+                if let data = snapshot.value as? String{
+                    completion(data)
+                }
+            }
+        }
+    }
+    
+    func getImageName(id: String, key: String, completion: @escaping (String)-> ()){
+        ref.child("posts").child(id).child(key).child("image").getData { error, snapshot in
+            if let error = error{
+                print(error)
+            }
+            if let snapshot = snapshot{
+                if let data = snapshot.value as? String{
+                    completion(data)
+                }
+            }
+        }
+    }
+    
+    
+    func getImages(id: String, key: String, completion: @escaping (UIImage) -> ()){
+        getImageName(id: id, key: key) { name in
+            self.storageRef.child("posts").child(id).child(name).getData(maxSize: .max) { data, error in
+                if let error = error{
+                    print(error)
+                }else if let data = data{
+                    completion(UIImage(data: data) ?? UIImage())
+                }
+            }
+        }
+    }
+    
+    func getUsername(id: String, completion: @escaping (String)-> ()){
+        ref.child("users").child(id).child("email").getData { error, snapshot in
+            if let error = error{
+                print(error)
+            }
+            if let snapshot = snapshot{
+                if let data = snapshot.value as? String{
+                    completion(data)
+                }
+            }
+        }
+    }
+    // MARK: - Table view data source
+
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        // #warning Incomplete implementation, return the number of sections
+        return 1
+    }
+
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        // #warning Incomplete implementation, return the number of rows
+        return postsKeysSrc.count
+    }
+
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "postCell", for: indexPath) as! PostTableViewCell
+
+        // Configure the cell...
+        getComment(id: finalPostData[postsKeysSrc[indexPath.row]]!,
+                   key: postsKeysSrc[indexPath.row]) { value in
+            cell.commentLabel.text = value
+        }
+        getImages(id: finalPostData[postsKeysSrc[indexPath.row]]!,
+                  key: postsKeysSrc[indexPath.row]) { img in
+            cell.postedImage.image = img
+        }
+        getUsername(id: finalPostData[postsKeysSrc[indexPath.row]]!) { name in
+            cell.postedByLabel.text = name
+        }
+
+        return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 280
+    }
+
+    /*
+    // Override to support conditional editing of the table view.
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        // Return false if you do not want the specified item to be editable.
+        return true
+    }
+    */
+
+    /*
+    // Override to support editing the table view.
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            // Delete the row from the data source
+            tableView.deleteRows(at: [indexPath], with: .fade)
+        } else if editingStyle == .insert {
+            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+        }    
+    }
+    */
+
+    /*
+    // Override to support rearranging the table view.
+    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
+
+    }
+    */
+
+    /*
+    // Override to support conditional rearranging of the table view.
+    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        // Return false if you do not want the item to be re-orderable.
+        return true
+    }
+    */
+
+    /*
+    // MARK: - Navigation
+
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // Get the new view controller using segue.destination.
+        // Pass the selected object to the new view controller.
+    }
+    */
+
+}
