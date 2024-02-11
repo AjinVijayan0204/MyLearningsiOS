@@ -25,14 +25,14 @@
 
 # LOCATION
 
-# Maps
+## Maps
     let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
     let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     let region = MKCoordinateRegion(center: coordinate, span: span)
     self.mapView.setRegion(region, animated: true)
     self.mapView.addAnnotation(createAnnotation(title: name, for: coordinate))   
 
-# Current location
+## Current location
     Add privacy location in info plist
     eg: var locationManager = CLLocationManager()
           locationManager.delegate = self
@@ -45,7 +45,7 @@
             self.mapView.setRegion(region, animated: true)
             self.mapView.addAnnotation(createAnnotation(title: "new", for: location!.coordinate))
 
-# Get location from mapview 
+## Get location from mapview 
 
     eg: by using CLGeocoder and its reverseGeocodeLocation
         if gesture.state == UIGestureRecognizer.State.began{
@@ -157,3 +157,45 @@
                 }
             }
         }
+
+# Notifications
+## Local Notifications  
+
+    1. Request Notification Access
+    eg:
+    let options: UNAuthorizationOptions = [.alert, .badge, .sound]
+        UNUserNotificationCenter.current().requestAuthorization(options: options) { success, error in
+            if let error = error{
+                print("Error - \(error)")
+            }else{
+                print("Success")
+            }
+        }
+
+    2. Create Notification
+        1. Create content
+            eg: 
+            let content = UNMutableNotificationContent()
+            content.title = "App notification"
+            content.subtitle = "Subtitle"
+            content.badge = 1
+            content.sound = .default
+
+        2. Create trigger
+            a. time interval
+                let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+            b. Calender
+                let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
+            c. location
+                create a CLCircularRegion, and pass it.
+                let trigger = UNLocationNotificationTrigger(region: region, repeats: false)
+        
+        3. Create request
+            let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+        
+        4. Add the request
+            UNUserNotificationCenter.current().add(request)
+    
+    3. Cancel/ Stop notification
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
