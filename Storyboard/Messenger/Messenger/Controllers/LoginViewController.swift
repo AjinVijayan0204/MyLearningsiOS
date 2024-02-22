@@ -6,6 +6,10 @@
 //
 
 import UIKit
+import FirebaseAuth
+import FacebookLogin
+import GoogleSignIn
+import FirebaseCore
 
 class LoginViewController: UIViewController {
     
@@ -42,11 +46,23 @@ class LoginViewController: UIViewController {
         return button
     }()
     
+    private let fbloginButton: FBLoginButton = {
+        let button = FBLoginButton()
+        button.permissions = ["public_profile", "email"]
+        return button
+    }()
+    
+    private let GidSignInButton: GIDSignInButton = {
+        let button = GIDSignInButton()
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
         setupView()
+        fbloginButton.delegate = self
     }
     
     override func viewDidLayoutSubviews() {
@@ -69,6 +85,14 @@ class LoginViewController: UIViewController {
                                    y: passwordField.bottom + 10,
                                    width: scrollView.width - 60,
                                    height: 52)
+        fbloginButton.frame = CGRect(x: 30,
+                                     y: loginButton.bottom + 10,
+                                     width: scrollView.width - 60,
+                                     height: 52)
+        GidSignInButton.frame = CGRect(x: 30,
+                                     y: fbloginButton.bottom + 10,
+                                     width: scrollView.width - 60,
+                                     height: 52)
     }
     
     func setupView(){
@@ -83,9 +107,14 @@ class LoginViewController: UIViewController {
         passwordField.delegate = self
         scrollView.addSubview(passwordField)
         scrollView.addSubview(loginButton)
+        scrollView.addSubview(fbloginButton)
+        scrollView.addSubview(GidSignInButton)
         loginButton.addTarget(self,
                               action: #selector(loginButtonTapped),
                               for: .touchUpInside)
+        GidSignInButton.addTarget(self,
+                                  action: #selector(googleSignInTapped),
+                                  for: .touchUpInside)
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Register",
                                                             style: .done,
                                                             target: self,
@@ -100,7 +129,15 @@ class LoginViewController: UIViewController {
             createAlert(title: "Failed", message: "Please enter the credentials!!")
             return
         }
-        
+        Auth.auth().signIn(withEmail: email, password: password) { [weak self] authResult, error in
+            guard let self = self else { return }
+            guard let _ = authResult, error == nil else{
+                print("Error")
+                return
+            }
+            print("Logged in")
+            self.navigationController?.dismiss(animated: true)
+        }
         
     }
     
@@ -108,6 +145,43 @@ class LoginViewController: UIViewController {
         let vc = RegisterViewController()
         vc.title = "Create Account"
         navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func googleSignInTapped(){
+        guard let clientId = FirebaseApp.app()?.options.clientID else {
+            print("Error in client id")
+            return
+        }
+        let config = GIDConfiguration(clientID: clientId)
+        GIDSignIn.sharedInstance.configuration = config
+        
+        GIDSignIn.sharedInstance.signIn(withPresenting: self) { [weak self] result, error in
+            guard let self = self else {
+                print("Error in signin")
+                return
+            }
+            guard let user = result?.user, let idToken = user.idToken?.tokenString else {
+                print("error in result")
+                return
+            }
+            
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken,
+                                                           accessToken: user.accessToken.tokenString)
+            guard let email = user.profile?.email, let name = user.profile?.name, let lastname = user.profile?.familyName else {
+                print("Error in profile")
+                return
+            }
+            DatabaseManager.shared.userExists(with: email) { exists in
+                if !exists{
+                    Auth.auth().signIn(with: credential) { authResult, error in
+                        DatabaseManager.shared.insertUser(with: ChatAppUser(firstName: name,
+                                                                            lastName: lastname,
+                                                                            email: email))
+                    }
+                }
+            }
+            self.navigationController?.dismiss(animated: true)
+        }
     }
     
     //custom views
@@ -170,3 +244,52 @@ extension LoginViewController : UITextFieldDelegate{
         return true
     }
 }
+
+extension LoginViewController: LoginButtonDelegate{
+    func loginButtonDidLogOut(_ loginButton: FBSDKLoginKit.FBLoginButton) {
+        // intentially
+    }
+    
+    func loginButton(_ loginButton: FBSDKLoginKit.FBLoginButton, didCompleteWith result: FBSDKLoginKit.LoginManagerLoginResult?, error: Error?) {
+        guard let token = result?.token?.tokenString else{
+            print("User authentication failed with FB")
+            return
+        }
+        
+        let credential = FacebookAuthProvider.credential(withAccessToken: token)
+        Auth.auth().signIn(with: credential) { [weak self] authResult, error in
+            guard let self = self else { return }
+            guard let _ = authResult, error == nil else{
+                print("User authentication failed with FB MFA needed")
+                return
+            }
+            Profile.loadCurrentProfile { profile, error in
+                guard let profile = profile, error == nil else {
+                    print("Error in loading profile")
+                    return
+                }
+                guard let email = profile.email else{
+                    print("Error in email ")
+                    return
+                }
+                guard let firstname = profile.firstName else{
+                    print("Error in firstname ")
+                    return
+                }
+                guard let lastname = profile.lastName else{
+                    print("Error in firstname ")
+                    return
+                }
+                DatabaseManager.shared.userExists(with: email) { exists in
+                    if !exists{
+                        DatabaseManager.shared.insertUser(with: ChatAppUser(firstName: firstname,
+                                                                            lastName: lastname,
+                                                                            email: email))
+                    }
+                }
+            }
+            self.navigationController?.dismiss(animated: true)
+        }
+    }
+}
+

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class RegisterViewController: UIViewController {
     
@@ -21,6 +22,10 @@ class RegisterViewController: UIViewController {
         imageView.image = UIImage(systemName: "person")
         imageView.tintColor = .gray
         imageView.contentMode = .scaleAspectFit
+        imageView.layer.borderWidth = 1
+        imageView.layer.borderColor = UIColor.black.cgColor
+        imageView.layer.cornerRadius = imageView.bounds.width / 2
+        imageView.layer.masksToBounds = true
         imageView.isUserInteractionEnabled = true
         return imageView
     }()
@@ -93,7 +98,7 @@ class RegisterViewController: UIViewController {
     }
     
     func setupView(){
-        title = "Log In"
+        title = "Register"
         view.backgroundColor = .white
         view.addSubview(scrollView)
         scrollView.addSubview(imageView)
@@ -116,15 +121,16 @@ class RegisterViewController: UIViewController {
         RegisterButton.addTarget(self,
                               action: #selector(loginButtonTapped),
                               for: .touchUpInside)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Register",
+        /*navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Register",
                                                             style: .done,
                                                             target: self,
                                                             action: #selector(didTapRegister))
+         */
         
     }
     
     @objc private func didTapChangeProfilePic(){
-        print("image icon")
+        presentPhotoActionSheet()
     }
     
     @objc private func loginButtonTapped(){
@@ -142,8 +148,23 @@ class RegisterViewController: UIViewController {
             createAlert(title: "Failed", message: "Please enter the user data to create account!!")
             return
         }
-        
-        
+        DatabaseManager.shared.userExists(with: email) { [weak self]exists in
+            guard let self = self else { return }
+            guard !exists else{
+                self.createAlert(title: "Failed", message: "Email is already used!!")
+                return
+            }
+            Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
+                guard let _ = authResult, error == nil else{
+                    print(error?.localizedDescription)
+                    return
+                }
+                DatabaseManager.shared.insertUser(with: ChatAppUser(firstName: firstname,
+                                                                    lastName: lastname,
+                                                                    email: email))
+                self.navigationController?.dismiss(animated: true)
+            }
+        }
     }
     
     @objc private func didTapRegister(){
@@ -219,4 +240,56 @@ extension RegisterViewController : UITextFieldDelegate{
         }
         return true
     }
+}
+
+extension RegisterViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate{
+    
+    func presentPhotoActionSheet(){
+        let actionSheet = UIAlertController(title: "Profile Picture",
+                                            message: "Upload using",
+                                            preferredStyle: .actionSheet)
+        let cancel = UIAlertAction(title: "Cancel",
+                                   style: .cancel,
+                                   handler: nil)
+        let takePhoto = UIAlertAction(title: "Take Photo",
+                                      style: .default) { [weak self] _ in
+            guard let self = self else { return }
+            self.presentCamera()
+        }
+        let choosePhoto = UIAlertAction(title: "Choose Photo",
+                                      style: .default) { [weak self] _ in
+            guard let self = self else { return }
+            self.presentPhotoPicker()
+        }
+        actionSheet.addAction(cancel)
+        actionSheet.addAction(takePhoto)
+        actionSheet.addAction(choosePhoto)
+        present(actionSheet, animated: true)
+    }
+    
+    func presentCamera(){
+        let vc = UIImagePickerController()
+        vc.sourceType = .camera
+        vc.delegate = self
+        vc.allowsEditing = true
+        present(vc, animated: true)
+    }
+    
+    func presentPhotoPicker(){
+        let vc = UIImagePickerController()
+        vc.sourceType = .photoLibrary
+        vc.delegate = self
+        vc.allowsEditing = true
+        present(vc, animated: true)
+    }
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        guard let selectedImg = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else { return }
+        self.imageView.image = selectedImg
+        
+        dismiss(animated: true)
+    }
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        //
+    }
+    
 }
