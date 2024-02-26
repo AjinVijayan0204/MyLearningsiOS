@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseAuth
+import SVProgressHUD
 
 class RegisterViewController: UIViewController {
     
@@ -148,8 +149,14 @@ class RegisterViewController: UIViewController {
             createAlert(title: "Failed", message: "Please enter the user data to create account!!")
             return
         }
+        
+        SVProgressHUD.show()
+        
         DatabaseManager.shared.userExists(with: email) { [weak self]exists in
             guard let self = self else { return }
+            DispatchQueue.main.async {
+                SVProgressHUD.dismiss()
+            }
             guard !exists else{
                 self.createAlert(title: "Failed", message: "Email is already used!!")
                 return

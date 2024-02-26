@@ -10,6 +10,7 @@ import FirebaseAuth
 import FacebookLogin
 import GoogleSignIn
 import FirebaseCore
+import SVProgressHUD
 
 class LoginViewController: UIViewController {
     
@@ -119,7 +120,7 @@ class LoginViewController: UIViewController {
                                                             style: .done,
                                                             target: self,
                                                             action: #selector(didTapRegister))
-        
+        SVProgressHUD.setDefaultStyle(.dark)
     }
     
     @objc private func loginButtonTapped(){
@@ -129,8 +130,12 @@ class LoginViewController: UIViewController {
             createAlert(title: "Failed", message: "Please enter the credentials!!")
             return
         }
+        SVProgressHUD.show()
         Auth.auth().signIn(withEmail: email, password: password) { [weak self] authResult, error in
             guard let self = self else { return }
+            DispatchQueue.main.async {
+                SVProgressHUD.dismiss()
+            }
             guard let _ = authResult, error == nil else{
                 print("Error")
                 return
