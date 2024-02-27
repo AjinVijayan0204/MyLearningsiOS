@@ -56,6 +56,10 @@ class ConverstaionViewController: UIViewController {
         tableView.dataSource = self
         view.addSubview(tableView)
         view.addSubview(noConverstionLabel)
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .compose,
+                                                            target: self,
+                                                            action: #selector(didTapComposeButton))
     }
     
     private func validateAuth(){
@@ -69,6 +73,12 @@ class ConverstaionViewController: UIViewController {
     
     private func fetchConversations(){
         
+    }
+    
+    @objc private func didTapComposeButton(){
+        let vc = NewConversationViewController()
+        let navVC = UINavigationController(rootViewController: vc)
+        present(navVC, animated: true)
     }
 }
 
