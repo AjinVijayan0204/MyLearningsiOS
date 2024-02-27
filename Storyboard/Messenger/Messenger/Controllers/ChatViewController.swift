@@ -52,7 +52,6 @@ class ChatViewController: MessagesViewController {
 
 extension ChatViewController: MessagesDataSource, MessagesLayoutDelegate, MessagesDisplayDelegate{
     var currentSender: MessageKit.SenderType {
-        print("cureent")
         return selfSender
     }
     
