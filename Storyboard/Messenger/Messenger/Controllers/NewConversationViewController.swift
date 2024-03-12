@@ -120,11 +120,17 @@ extension NewConversationViewController: UISearchBarDelegate{
     }
     
     func filterUsers(with term: String){
-        guard hasFetched else{
+        guard let currentUserEmail = UserDefaults.standard.value(forKey: "email") as? String,
+              hasFetched else{
             return
         }
+        let safeEmail = DatabaseManager.getSafeEmail(email: currentUserEmail)
         SVProgressHUD.dismiss()
         var results: [[String: String]] = self.users.filter { data in
+            guard let email = data["email"],
+                  email != safeEmail else{
+                return false
+            }
             guard let name = data["name"]?.lowercased() else{
                 return false
             }

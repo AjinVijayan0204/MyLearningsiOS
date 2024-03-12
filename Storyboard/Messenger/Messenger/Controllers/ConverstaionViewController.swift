@@ -59,6 +59,7 @@ class ConverstaionViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         validateAuth()
+        startListeningForConversations()
     }
     
     override func viewDidLayoutSubviews() {
