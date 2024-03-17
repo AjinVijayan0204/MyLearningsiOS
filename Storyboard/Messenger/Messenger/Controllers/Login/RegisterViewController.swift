@@ -100,7 +100,7 @@ class RegisterViewController: UIViewController {
     
     func setupView(){
         title = "Register"
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         view.addSubview(scrollView)
         scrollView.addSubview(imageView)
         emailField = createTextField(for: .emailTextField)
@@ -153,12 +153,12 @@ class RegisterViewController: UIViewController {
         SVProgressHUD.show()
         
         DatabaseManager.shared.userExists(with: email) { [weak self]exists in
-            guard let self = self else { return }
+            guard let strongSelf = self else { return }
             DispatchQueue.main.async {
                 SVProgressHUD.dismiss()
             }
             guard !exists else{
-                self.createAlert(title: "Failed", message: "Email is already used!!")
+                strongSelf.createAlert(title: "Failed", message: "Email is already used!!")
                 return
             }
             Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
@@ -174,7 +174,7 @@ class RegisterViewController: UIViewController {
                     if success{
                         //upload image
                         print("success")
-                        guard let image = self.imageView.image, let data = image.pngData() else{
+                        guard let image = strongSelf.imageView.image, let data = image.pngData() else{
                             return
                         }
                         let filename = chatUser.profilePictureName
@@ -184,6 +184,8 @@ class RegisterViewController: UIViewController {
                             switch result{
                             case .success(let downloadUrl):
                                 UserDefaults.standard.set(downloadUrl, forKey: "profile_picture_url")
+                                UserDefaults.standard.set(email, forKey: "email")
+                                UserDefaults.standard.set("\(firstname) \(lastname)", forKey: "name")
                                 print(downloadUrl)
                             case .failure(let error):
                                 print("Storage error : \(error)")
@@ -191,7 +193,7 @@ class RegisterViewController: UIViewController {
                         }
                     }
                 }
-                self.navigationController?.dismiss(animated: true)
+                strongSelf.navigationController?.dismiss(animated: true)
             }
         }
     }
@@ -222,7 +224,7 @@ class RegisterViewController: UIViewController {
         field.layer.borderColor = UIColor.lightGray.cgColor
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 0))
         field.leftViewMode = .always
-        field.backgroundColor = .white
+        field.backgroundColor = .secondarySystemBackground
         switch fieldType{
         case .emailTextField:
             field.returnKeyType = .continue
@@ -282,13 +284,13 @@ extension RegisterViewController: UIImagePickerControllerDelegate, UINavigationC
                                    handler: nil)
         let takePhoto = UIAlertAction(title: "Take Photo",
                                       style: .default) { [weak self] _ in
-            guard let self = self else { return }
-            self.presentCamera()
+            guard let strongSelf = self else { return }
+            strongSelf.presentCamera()
         }
         let choosePhoto = UIAlertAction(title: "Choose Photo",
                                       style: .default) { [weak self] _ in
-            guard let self = self else { return }
-            self.presentPhotoPicker()
+            guard let strongSelf = self else { return }
+            strongSelf.presentPhotoPicker()
         }
         actionSheet.addAction(cancel)
         actionSheet.addAction(takePhoto)

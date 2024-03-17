@@ -9,20 +9,66 @@ import UIKit
 import FirebaseAuth
 import FacebookLogin
 import GoogleSignIn
+import SDWebImage
+
 
 class ProfileViewController: UIViewController {
 
     @IBOutlet var tableView: UITableView!
     
-    var data = ["Log out"]
+    var data = [ProfileViewModel]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        tableView.register(ProfileTableViewCell.self, forCellReuseIdentifier: "ProfileTableViewCell")
+        let name = UserDefaults.standard.value(forKey: "name") as? String ?? "No Name"
+        data.append(ProfileViewModel(viewModelType: .info, title: "Name: \(name)", handler: nil))
+        let email = UserDefaults.standard.value(forKey: "email") as? String ?? "No Email"
+        data.append(ProfileViewModel(viewModelType: .info, title: "Name: \(email)", handler: nil))
+        data.append(ProfileViewModel(viewModelType: .logout, title: "Log Out", handler: logOut))
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.delegate = self
         tableView.dataSource = self
         tableView.tableHeaderView = createTableHeader()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.reloadData()
+    }
+    
+    private func logOut(){
+        let alert = UIAlertController(title: "Log out", message: "Are you sure to log out!", preferredStyle: .alert)
+        let logout = UIAlertAction(title: "Log out", style: .destructive) { [weak self] _ in
+            guard let strongSelf = self else { return }
+           
+            ///clear user defaults
+            UserDefaults.standard.set(nil, forKey: "email")
+            UserDefaults.standard.set(nil, forKey: "name")
+            UserDefaults.standard.set(nil, forKey: "profile_picture_url")
+            print("Clearing cache...logging out")
+            ///Facebook logout
+            FBSDKLoginKit.LoginManager().logOut()
+            
+            ///Google logout
+            GIDSignIn.sharedInstance.signOut()
+           
+            do{
+                try Auth.auth().signOut()
+                let vc = LoginViewController()
+                let nav = UINavigationController(rootViewController: vc)
+                nav.modalPresentationStyle = .fullScreen
+                strongSelf.present(nav, animated: true)
+            }catch{
+                print("Failed to Logout")
+            }
+        }
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+        alert.addAction(cancel)
+        alert.addAction(logout)
+        self.present(alert, animated: true)
     }
     
     func createTableHeader() -> UIView?{
@@ -51,10 +97,10 @@ class ProfileViewController: UIViewController {
         headerView.addSubview(imageView)
         
         StorageManager.shared.downloadUrl(for: path) { [weak self]result in
-            guard let self = self else{ return }
+            guard let strongSelf = self else{ return }
             switch result{
             case .success(let url):
-                self.downloadImage(imageView: imageView, url: url)
+                strongSelf.downloadImage(imageView: imageView, url: url)
             case .failure(let error):
                 print("errror is \(error)")
             }
@@ -62,16 +108,8 @@ class ProfileViewController: UIViewController {
         return headerView
     }
     
-    func downloadImage(imageView: UIImageView, url: URL){
-        URLSession.shared.dataTask(with: URLRequest(url: url)) { data, response, error in
-            guard let data = data, error == nil else{
-                return
-            }
-            DispatchQueue.main.async {
-                let image = UIImage(data: data)
-                imageView.image = image
-            }
-        }.resume()
+    private func downloadImage(imageView: UIImageView, url: URL){
+        imageView.sd_setImage(with: url)
     }
 }
 
@@ -80,40 +118,32 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource{
         return data.count
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = data[indexPath.row]
-        cell.textLabel?.textAlignment = .center
-        cell.textLabel?.textColor = .red
+        let viewModel = data[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: ProfileTableViewCell.identifier, for: indexPath) as! ProfileTableViewCell
+        cell.setUp(with: viewModel)
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let alert = UIAlertController(title: "Log out", message: "Are you sure to log out!", preferredStyle: .alert)
-        let logout = UIAlertAction(title: "Log out", style: .destructive) { [weak self] _ in
-            guard let self = self else { return }
-            
-            ///Facebook logout
-            FBSDKLoginKit.LoginManager().logOut()
-            
-            ///Google logout
-            GIDSignIn.sharedInstance.signOut()
-            
-            do{
-                try Auth.auth().signOut()
-                let vc = LoginViewController()
-                let nav = UINavigationController(rootViewController: vc)
-                nav.modalPresentationStyle = .fullScreen
-                self.present(nav, animated: true)
-            }catch{
-                print("Failed to Logout")
-            }
-        }
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
-        alert.addAction(cancel)
-        alert.addAction(logout)
-        self.present(alert, animated: true)
+        data[indexPath.row].handler?()
     }
     
+}
+
+class ProfileTableViewCell: UITableViewCell{
+    
+    static let identifier = "ProfileTableViewCell"
+    
+    public func setUp(with viewModel: ProfileViewModel){
+        self.textLabel?.text = viewModel.title
+        switch viewModel.viewModelType{
+        case .info:
+            selectionStyle = .none
+        case .logout:
+            textLabel?.textColor = .red
+            textLabel?.textAlignment = .center
+        }
+    }
 }

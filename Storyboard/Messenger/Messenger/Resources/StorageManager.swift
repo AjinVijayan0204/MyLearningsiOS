@@ -12,6 +12,8 @@ final class StorageManager{
     static let shared = StorageManager()
     private let storage = Storage.storage(url: "gs://messenger-340bd.appspot.com").reference()
     
+    private init(){}
+    
     /*
      format - /images/email.png
      */
@@ -19,12 +21,15 @@ final class StorageManager{
     public typealias UploadPictureCompletion = (Result<String, Error>) -> Void
     
     public func uploadProfilePicture(with data: Data, filename: String, completion: @escaping UploadPictureCompletion){
-        storage.child("images/\(filename)").putData(data) { metadata, error in
+        storage.child("images/\(filename)").putData(data) { [weak self]metadata, error in
+            guard let strongSelf = self else{
+                return
+            }
             guard error == nil else {
                 completion(.failure(StorageErrors.failedToUpload))
                 return
             }
-            self.storage.child("images/\(filename)").downloadURL { url, error in
+            strongSelf.storage.child("images/\(filename)").downloadURL { url, error in
                 guard let url = url else{
                     print("Error in loading url")
                     completion(.failure(StorageErrors.failedToGetDownloadUrl))

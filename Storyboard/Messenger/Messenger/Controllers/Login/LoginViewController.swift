@@ -58,12 +58,20 @@ class LoginViewController: UIViewController {
         return button
     }()
     
+    private let TestButton: UIButton = {
+        let button = UIButton(type: .roundedRect)
+        button.frame = CGRect(x: 20, y: 50, width: 100, height: 30)
+        button.setTitle("Test Crash", for: .normal)
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
         setupView()
         fbloginButton.delegate = self
+        
     }
     
     override func viewDidLayoutSubviews() {
@@ -98,7 +106,7 @@ class LoginViewController: UIViewController {
     
     func setupView(){
         title = "Log In"
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         view.addSubview(scrollView)
         scrollView.addSubview(imageView)
         emailField = createTextField(for: .emailTextField)
@@ -110,17 +118,26 @@ class LoginViewController: UIViewController {
         scrollView.addSubview(loginButton)
         scrollView.addSubview(fbloginButton)
         scrollView.addSubview(GidSignInButton)
+        scrollView.addSubview(TestButton)
         loginButton.addTarget(self,
                               action: #selector(loginButtonTapped),
                               for: .touchUpInside)
         GidSignInButton.addTarget(self,
                                   action: #selector(googleSignInTapped),
                                   for: .touchUpInside)
+        TestButton.addTarget(self, action: #selector(testButtonTapped), for: .touchUpInside)
+        
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Register",
                                                             style: .done,
                                                             target: self,
                                                             action: #selector(didTapRegister))
         SVProgressHUD.setDefaultStyle(.dark)
+    }
+    
+    @objc private func testButtonTapped(){
+        print("clicked crash")
+        let numbers = [0]
+        let _ = numbers[1]
     }
     
     @objc private func loginButtonTapped(){
@@ -132,7 +149,7 @@ class LoginViewController: UIViewController {
         }
         SVProgressHUD.show()
         Auth.auth().signIn(withEmail: email, password: password) { [weak self] authResult, error in
-            guard let self = self else { return }
+            guard let strongSelf = self else { return }
             DispatchQueue.main.async {
                 SVProgressHUD.dismiss()
             }
@@ -157,7 +174,7 @@ class LoginViewController: UIViewController {
             }
             UserDefaults.standard.set(email, forKey: "email")
             
-            self.navigationController?.dismiss(animated: true)
+            strongSelf.navigationController?.dismiss(animated: true)
         }
         
     }
@@ -178,7 +195,7 @@ class LoginViewController: UIViewController {
         GIDSignIn.sharedInstance.configuration = config
         
         GIDSignIn.sharedInstance.signIn(withPresenting: self) { [weak self] result, error in
-            guard let self = self else {
+            guard let strongSelf = self else {
                 print("Error in signin")
                 return
             }
@@ -231,7 +248,7 @@ class LoginViewController: UIViewController {
                     }
                 }
             }
-            self.navigationController?.dismiss(animated: true)
+            strongSelf.navigationController?.dismiss(animated: true)
         }
     }
     
@@ -255,7 +272,7 @@ class LoginViewController: UIViewController {
         field.layer.borderColor = UIColor.lightGray.cgColor
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 0))
         field.leftViewMode = .always
-        field.backgroundColor = .white
+        field.backgroundColor = .secondarySystemBackground
         switch fieldType{
         case .emailTextField:
             field.returnKeyType = .continue
@@ -301,7 +318,7 @@ extension LoginViewController: LoginButtonDelegate{
         
         let credential = FacebookAuthProvider.credential(withAccessToken: token)
         Auth.auth().signIn(with: credential) { [weak self] authResult, error in
-            guard let self = self else { return }
+            guard let strongSelf = self else { return }
             guard let _ = authResult, error == nil else{
                 print("User authentication failed with FB MFA needed")
                 return
@@ -373,7 +390,7 @@ extension LoginViewController: LoginButtonDelegate{
                     }
                 }
             }
-            self.navigationController?.dismiss(animated: true)
+            strongSelf.navigationController?.dismiss(animated: true)
         }
     }
 }
