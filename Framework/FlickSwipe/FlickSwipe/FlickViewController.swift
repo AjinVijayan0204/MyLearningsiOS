@@ -162,7 +162,8 @@ open class FlickViewController: UIViewController {
         case .bottomTrailing:
             multiplier = 1
         }
-        childView.anchorPoint = type.getAnchor()
+        childView.layer.anchorPoint = type.getAnchor()
+        //childView.anchorPoint = type.getAnchor()
         childView.center = CGPoint(x: view.center.x + multiplier * childView.bounds.width/2, y: view.center.y + childView.bounds.height/2)
         
     }
