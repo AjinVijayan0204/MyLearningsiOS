@@ -7,6 +7,21 @@
 - UIRepresentable to create UIkit views in SwiftUI
       - for creating gesture recognition create a coordinator class inside the UIRepresentable.(refer twitter animation swiftui)
 
+# UIKit
+
+## PageView Controller
+    1. Declaration
+    eg: let pageViewController: UIPageViewController
+
+    2. Creation
+    eg: pageViewController = UIPageViewController(transitionStyle: .scroll,
+                                                  navigationOrientation: .horizontal)
+    
+    3. Adding to ViewController
+    eg: addChild(pageViewController)
+        view.addSubview(pageViewController.view)
+        pageViewController.didMove(toParent: self)
+
  # Animation in UIKit
       - UIView.animate(withDuration: <#T##TimeInterval#>, animations: <#T##() -> Void#>)
 
