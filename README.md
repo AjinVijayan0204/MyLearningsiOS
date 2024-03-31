@@ -22,6 +22,22 @@
         view.addSubview(pageViewController.view)
         pageViewController.didMove(toParent: self)
 
+    4. Add datasource functions
+        1. assign data source
+        eg: pageViewController.dataSource = self
+
+        2. before ViewController
+        eg: func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController?
+
+        3. After ViewController
+        eg: func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController?
+
+        4. No of pages
+        eg: func presentationCount(for pageViewController: UIPageViewController) -> Int
+
+        5. Current index
+        eg: func presentationIndex(for pageViewController: UIPageViewController) -> Int
+
  # Animation in UIKit
       - UIView.animate(withDuration: <#T##TimeInterval#>, animations: <#T##() -> Void#>)
 

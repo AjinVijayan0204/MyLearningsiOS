@@ -21,9 +21,12 @@ class OnboardingContainerViewController: UIViewController{
         pageViewController = UIPageViewController(transitionStyle: .scroll,
                                                   navigationOrientation: .horizontal)
         
-        let page1 = ViewController1()
-        let page2 = ViewController2()
-        let page3 = ViewController3()
+        let page1 = OnboardingViewController(imageName: "delorean",
+                                             titleText: "Bankey is faster, easier to use and has a brand new look and feel that will make you feel like you are back in 1989")
+        let page2 = OnboardingViewController(imageName: "thumbs",
+                                             titleText: "Move your money around the world quickly and securely")
+        let page3 = OnboardingViewController(imageName: "world",
+                                             titleText: "Learn more at www.bankey.com")
         
         pages.append(page1)
         pages.append(page2)
@@ -100,23 +103,3 @@ extension OnboardingContainerViewController: UIPageViewControllerDataSource{
     }
 }
 
-class ViewController1: UIViewController{
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .systemRed
-    }
-}
-
-class ViewController2: UIViewController{
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .systemGreen
-    }
-}
-
-class ViewController3: UIViewController{
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .systemBlue
-    }
-}
