@@ -14,11 +14,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     let loginViewController = LoginViewController()
     let onboardingContainerViewController = OnboardingContainerViewController()
+    let dummyVC = DummyViewController()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         loginViewController.delegate = self
         onboardingContainerViewController.delegate = self
+        dummyVC.logoutDelegate = self
         return true
     }
 
@@ -39,14 +41,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
-extension AppDelegate: LoginViewControllerDelegate, OnboardingContainerViewControllerDelegate{
+extension AppDelegate: LoginViewControllerDelegate, OnboardingContainerViewControllerDelegate, LogoutDelegate{
+    
+    func didLogout() {
+        setRootViewController(loginViewController)
+    }
+    
     
     func didFinshOnboarding() {
-        print("did finish")
+        LocalState.hasOnboarded = true
+        setRootViewController(dummyVC)
     }
     
     func didLogin() {
-        setRootViewController(onboardingContainerViewController)
+        if LocalState.hasOnboarded{
+            setRootViewController(dummyVC)
+        }else{
+            setRootViewController(onboardingContainerViewController)
+        }
     }
     
 }
