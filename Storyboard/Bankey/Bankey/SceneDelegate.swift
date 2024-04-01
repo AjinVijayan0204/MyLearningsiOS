@@ -24,7 +24,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         app.window = UIWindow(windowScene: windowScene)
         app.window?.backgroundColor = .white
         
-        app.window?.rootViewController = app.loginViewController
+        app.window?.rootViewController = app.mainViewController
+        app.mainViewController.selectedIndex = 1
         //window?.rootViewController = app.onboardingContainerViewController
         
         app.window?.makeKeyAndVisible()
