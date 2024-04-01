@@ -25,8 +25,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         app.window?.backgroundColor = .white
         
         app.window?.rootViewController = app.mainViewController
-        app.mainViewController.selectedIndex = 1
-        //window?.rootViewController = app.onboardingContainerViewController
+        //app.mainViewController.selectedIndex = 1
+        app.window?.rootViewController = AccountSummaryViewController()
         
         app.window?.makeKeyAndVisible()
     }

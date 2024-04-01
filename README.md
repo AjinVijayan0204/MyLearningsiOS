@@ -54,6 +54,31 @@
             uilpr.minimumPressDuration = 2
             self.mapView.addGestureRecognizer(up)
 
+# Adding nib file
+    1. Create the UIView cocoa touch file and a nib file(View) with the same name.
+    2. link the nib file's owner with the cocoa touch class name(in identity inspector).
+    3. Inside the cocoa touch class
+        a. create an outlet for the view from nib file.
+        b. create override init(frame: CGRect) and required init?(coder: NSCoder)
+        c. from both init's load the nib from the bundle
+            eg:let bundle = Bundle(for: AccountSummaryHeaderView.self)
+               bundle.loadNibNamed("AccountSummaryHeaderView", owner: self)
+               addSubview(contentView)
+        d. add the constraints and properties to the content view.
+        e. create intrinsic size for the view
+            eg: override var intrinsicContentSize: CGSize{
+                    return CGSize(width: UIView.noIntrinsicMetric, height: 144)
+                 }
+    4. Inside the cocoa touch class where the view need to be used, 
+        a. initialise the view
+            eg: let header = AccountSummaryHeaderView(frame: .zero)
+        b. set the size
+            eg: var size = header.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+                size.width = self.view.bounds.width
+                header.frame.size = size
+        c. add the view
+            eg: tableView.tableHeaderView = header or addsubview(header)..etc
+
 # LOCATION
 
 ## Maps
