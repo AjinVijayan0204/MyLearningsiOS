@@ -79,6 +79,17 @@
         c. add the view
             eg: tableView.tableHeaderView = header or addsubview(header)..etc
 
+# Table view cell programatically
+    1. create a cocoa touch class for table view cell.
+    2. create a reuse identifier inside the class
+        eg: static let reuseID = "AccountSummaryCell"
+    3. create an initialiser
+        eg: override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?)
+    4. register the cell inside the tableviewcontroller cocoatouch class
+        eg: tableView.register(AccountSummaryCell.self,
+                           forCellReuseIdentifier: AccountSummaryCell.reuseID)
+    5. make use of the cell inside cellforAt datasource method
+        eg: let cell = tableView.dequeueReusableCell(withIdentifier: AccountSummaryCell.reuseID, for: indexPath) as! AccountSummaryCell
 # LOCATION
 
 ## Maps
