@@ -90,6 +90,15 @@
                            forCellReuseIdentifier: AccountSummaryCell.reuseID)
     5. make use of the cell inside cellforAt datasource method
         eg: let cell = tableView.dequeueReusableCell(withIdentifier: AccountSummaryCell.reuseID, for: indexPath) as! AccountSummaryCell
+
+# Attributed Text
+    Create a diff way of viewing the text like raised and all
+    eg: let dollarSignAttributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.preferredFont(forTextStyle: .callout),
+            .baselineOffset: 8]
+        let rootString = NSMutableAttributedString(string: "$", attributes: dollarSignAttributes)
+    assign the root string to the attributedtext property of label.
+    
 # LOCATION
 
 ## Maps
