@@ -16,14 +16,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     let loginViewController = LoginViewController()
     let onboardingContainerViewController = OnboardingContainerViewController()
-    let dummyVC = DummyViewController()
     let mainViewController = MainViewController()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         loginViewController.delegate = self
         onboardingContainerViewController.delegate = self
-        dummyVC.logoutDelegate = self
+        
         return true
     }
 
@@ -41,7 +40,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
 
-
+    func displayLogin(){
+        setRootViewController(loginViewController)
+    }
+    
+    private func displayNextScreen(){
+        if LocalState.hasOnboarded{
+            prepMainView()
+            setRootViewController(mainViewController)
+        }else{
+            setRootViewController(onboardingContainerViewController)
+        }
+    }
+    
+    private func prepMainView(){
+        mainViewController.setStatusBar()
+        UINavigationBar.appearance().isTranslucent = false
+        UINavigationBar.appearance().backgroundColor = appColor
+    }
 }
 
 extension AppDelegate: LoginViewControllerDelegate, OnboardingContainerViewControllerDelegate, LogoutDelegate{
@@ -53,15 +69,11 @@ extension AppDelegate: LoginViewControllerDelegate, OnboardingContainerViewContr
     
     func didFinshOnboarding() {
         LocalState.hasOnboarded = true
-        setRootViewController(dummyVC)
+        setRootViewController(mainViewController)
     }
     
     func didLogin() {
-        if LocalState.hasOnboarded{
-            setRootViewController(dummyVC)
-        }else{
-            setRootViewController(onboardingContainerViewController)
-        }
+        displayNextScreen()
     }
     
 }

@@ -24,11 +24,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         app.window = UIWindow(windowScene: windowScene)
         app.window?.backgroundColor = .white
         
-        app.window?.rootViewController = app.mainViewController
-        //app.mainViewController.selectedIndex = 1
-        app.window?.rootViewController = AccountSummaryViewController()
-        
-        app.window?.makeKeyAndVisible()
+        app.displayLogin()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

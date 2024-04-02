@@ -14,7 +14,7 @@ class CurrencyFormatter{
         return makeFormattedBalance(dollars: tuple.0, cents: tuple.1)
     }
     
-    private func breakIntoDollarsAndCents(_ amount: Decimal)-> (String, String){
+    func breakIntoDollarsAndCents(_ amount: Decimal)-> (String, String){
         let tuple = modf(amount.doubleValue)
         
         let dollars = convertDollar(tuple.0)
