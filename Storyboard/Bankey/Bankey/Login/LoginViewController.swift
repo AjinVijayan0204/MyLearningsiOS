@@ -32,6 +32,13 @@ class LoginViewController: UIViewController {
         return loginView.passwordTextField.text
     }
     
+    //animation
+    var leadingEdgesOffScreen: CGFloat = -1000
+    var leadingEdgesOnScreen: CGFloat = 16
+    
+    var titleLeadingAnchor: NSLayoutConstraint?
+    var descriptionLeadingAnchor: NSLayoutConstraint?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -45,6 +52,10 @@ class LoginViewController: UIViewController {
         signInBtn.configuration?.showsActivityIndicator = false
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        animate()
+    }
 }
 
 extension LoginViewController{
@@ -54,6 +65,7 @@ extension LoginViewController{
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.textAlignment = .center
         titleLabel.textColor = .black
+        titleLabel.alpha = 0
         titleLabel.font = .systemFont(ofSize: 25, weight: .bold)
         titleLabel.text = "Bankey"
         titleLabel.numberOfLines = 0
@@ -88,19 +100,23 @@ extension LoginViewController{
         view.addSubview(signInBtn)
         view.addSubview(errorMessageLabel)
         
-        // title label constraints
+        
+        //Title
         NSLayoutConstraint.activate([
-            descriptionLabel.topAnchor.constraint(equalToSystemSpacingBelow: titleLabel.bottomAnchor, multiplier: 2),
-            titleLabel.leadingAnchor.constraint(equalToSystemSpacingAfter: view.leadingAnchor, multiplier: 1),
-            view.trailingAnchor.constraint(equalToSystemSpacingAfter: titleLabel.trailingAnchor, multiplier: 1)
+            loginView.topAnchor.constraint(equalToSystemSpacingBelow: titleLabel.bottomAnchor, multiplier: 10),
+            titleLabel.trailingAnchor.constraint(equalTo: loginView.trailingAnchor)
         ])
+        
+        titleLeadingAnchor = titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: leadingEdgesOffScreen)
+        titleLeadingAnchor?.isActive = true
         
         // decription label constraints
         NSLayoutConstraint.activate([
             loginView.topAnchor.constraint(equalToSystemSpacingBelow: descriptionLabel.bottomAnchor, multiplier: 2),
-            descriptionLabel.leadingAnchor.constraint(equalToSystemSpacingAfter: view.leadingAnchor, multiplier: 5),
-            view.trailingAnchor.constraint(equalToSystemSpacingAfter: descriptionLabel.trailingAnchor, multiplier: 5)
+            descriptionLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor)
         ])
+        descriptionLeadingAnchor = descriptionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: leadingEdgesOffScreen)
+        descriptionLeadingAnchor?.isActive = true
         
         // login view constraints
         NSLayoutConstraint.activate([
@@ -155,5 +171,33 @@ extension LoginViewController{
     private func configureView(withMessage message: String){
         errorMessageLabel.isHidden = false
         errorMessageLabel.text = message
+    }
+}
+
+//MARK: - Animations
+
+extension LoginViewController{
+    
+    private func animate(){
+        let duration: Double = 2
+        
+        let animator = UIViewPropertyAnimator(duration: duration, curve: .easeInOut){
+            self.titleLeadingAnchor?.constant = self.leadingEdgesOnScreen
+            self.view.layoutIfNeeded()
+        }
+        animator.startAnimation()
+        
+        let animator2 = UIViewPropertyAnimator(duration: duration, curve: .easeInOut){
+            self.descriptionLeadingAnchor?.constant = self.leadingEdgesOnScreen
+            self.view.layoutIfNeeded()
+        }
+        animator2.startAnimation(afterDelay: 1)
+        
+        let animator3 = UIViewPropertyAnimator(duration: duration * 2, curve: .easeInOut){
+            self.titleLabel.alpha = 1
+            self.descriptionLabel.alpha = 1
+            self.view.layoutIfNeeded()
+        }
+        animator3.startAnimation(afterDelay: 1)
     }
 }
