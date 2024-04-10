@@ -52,7 +52,33 @@
         animation.isAdditive = true
         signInBtn.layer.add(animation, forKey: "shake")
 
-  Select views based on tags
+## sequential animation
+
+    eg: let numberOfFrames: Double = 6
+        let frameDuration = Double(1/numberOfFrames)
+
+        UIView.animateKeyframes(withDuration: duration, delay: 0) {
+            UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: frameDuration) {
+                self.imageView.transform = CGAffineTransform(rotationAngle: -angle)
+            }
+            UIView.addKeyframe(withRelativeStartTime: frameDuration, relativeDuration: frameDuration) {
+                self.imageView.transform = CGAffineTransform(rotationAngle: +angle)
+            }
+            UIView.addKeyframe(withRelativeStartTime: frameDuration*2, relativeDuration: frameDuration) {
+                self.imageView.transform = CGAffineTransform(rotationAngle: -angle)
+            }
+            UIView.addKeyframe(withRelativeStartTime: frameDuration*3, relativeDuration: frameDuration) {
+                self.imageView.transform = CGAffineTransform(rotationAngle: +angle)
+            }
+            UIView.addKeyframe(withRelativeStartTime: frameDuration*4, relativeDuration: frameDuration) {
+                self.imageView.transform = CGAffineTransform(rotationAngle: -angle)
+            }
+            UIView.addKeyframe(withRelativeStartTime: frameDuration*5, relativeDuration: frameDuration) {
+                self.imageView.transform = CGAffineTransform.identity
+            }
+        }
+
+  # Select views based on tags
       - first assign views/buttons with tags in storyboard
       - next create those things in code
           for example: - set of buttons with tags
