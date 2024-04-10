@@ -41,6 +41,17 @@
  # Animation in UIKit
       - UIView.animate(withDuration: <#T##TimeInterval#>, animations: <#T##() -> Void#>)
 
+## CAKeyframeAnimation
+
+    eg: let animation = CAKeyframeAnimation()
+        animation.keyPath = "position.x"
+        animation.values = [0, 10, -10, 10, 0]
+        animation.keyTimes = [0, 0.25, 0.5, 0.75, 1]
+        animation.duration = 0.4
+        
+        animation.isAdditive = true
+        signInBtn.layer.add(animation, forKey: "shake")
+
   Select views based on tags
       - first assign views/buttons with tags in storyboard
       - next create those things in code
@@ -48,7 +59,6 @@
                           if let button = view.viewWithTag(i) as? UIButton{
                                 button.configuration?.image = nil
                             }
-
 # Gestures
         eg: let uilpr = UILongPressGestureRecognizer(target: self, action: #selector(ViewController.longPressRecongition(gesture:)))
             uilpr.minimumPressDuration = 2
