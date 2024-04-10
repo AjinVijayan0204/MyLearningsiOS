@@ -98,7 +98,23 @@
             .baselineOffset: 8]
         let rootString = NSMutableAttributedString(string: "$", attributes: dollarSignAttributes)
     assign the root string to the attributedtext property of label.
-    
+
+# Notification broadcast
+    1. initialise a notification
+    eg: extension Notification.Name{
+        static let logout = Notification.Name("Logout")
+    }
+
+    2. Create notification
+    eg:  NotificationCenter.default.addObserver(self,
+                                               selector: #selector(<#T##@objc method#>),
+                                               name: .logout,
+                                               object: nil)
+        using object parameter we can pass data between controllers
+
+    3. triggering notification
+        eg: NotificationCenter.default.post(name: .logout, object: nil)
+
 # LOCATION
 
 ## Maps
