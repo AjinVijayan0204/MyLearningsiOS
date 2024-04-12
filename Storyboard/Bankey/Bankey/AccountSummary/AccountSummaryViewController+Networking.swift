@@ -54,7 +54,7 @@ struct Account: Codable{
     let type: AccountType
     let name: String
     let amount: Decimal
-    let createDateTime: Date
+    let createdDateTime: Date
 }
 
 extension AccountSummaryViewController{
