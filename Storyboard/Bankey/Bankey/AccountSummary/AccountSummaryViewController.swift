@@ -17,8 +17,10 @@ class AccountSummaryViewController: UIViewController {
     var headerViewModel = AccountSummaryHeaderView.ViewModel(welcomeMessage: "Welcome", name: "", date: Date())
     var accountCellViewModels: [AccountSummaryCell.ViewModel] = []
     
+    //components
     var tableView = UITableView()
     let headerView = AccountSummaryHeaderView(frame: .zero)
+    let refreshControl = UIRefreshControl()
     
     lazy var logoutBarButtonItem: UIBarButtonItem = {
         let barBtnItem = UIBarButtonItem(title: "Logout",
@@ -42,6 +44,7 @@ extension AccountSummaryViewController{
         setupTableView()
         setupTableHeaderView()
         setupNavigationBar()
+        setupRefreshControl()
         fetchData()
     }
     
@@ -78,8 +81,10 @@ extension AccountSummaryViewController{
         navigationItem.rightBarButtonItem = logoutBarButtonItem
     }
     
-    private func style(){
-        
+    private func setupRefreshControl(){
+        refreshControl.tintColor = appColor
+        refreshControl.addTarget(self, action: #selector(refreshContent), for: .valueChanged)
+        tableView.refreshControl = refreshControl
     }
     
     private func layout(){
@@ -103,15 +108,6 @@ extension AccountSummaryViewController: UITableViewDataSource, UITableViewDelega
         return cell
     }
     
-}
-
-
-//MARK: - Actions
-
-extension AccountSummaryViewController{
-    @objc func logoutTapped(_ sender: UIButton){
-        NotificationCenter.default.post(name: .logout, object: nil)
-    }
 }
 
 //MARK: - Networking
@@ -148,6 +144,7 @@ extension AccountSummaryViewController{
         
         group.notify(queue: .main) {
             self.tableView.reloadData()
+            self.tableView.refreshControl?.endRefreshing()
         }
     }
     
@@ -160,5 +157,16 @@ extension AccountSummaryViewController{
         accountCellViewModels = accounts.map({ account in
             AccountSummaryCell.ViewModel(accountType: account.type, accountName: account.name, balance: account.amount)
         })
+    }
+}
+
+//MARK: - Actions
+extension AccountSummaryViewController{
+    @objc func logoutTapped(_ sender: UIButton){
+        NotificationCenter.default.post(name: .logout, object: nil)
+    }
+    
+    @objc func refreshContent(){
+        fetchData()
     }
 }
