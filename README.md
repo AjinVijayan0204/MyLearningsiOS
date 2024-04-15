@@ -258,6 +258,29 @@
                
     }
 
+## Dispatch group
+    1. create a dispatch group
+        eg: let group = DispatchGroup()
+
+    2. enter and leave the group before and after the work starts and ends respectivey.
+        eg: group.enter()
+            fetchProfile(userId: "1") { result in
+                switch result{
+                case .success(let profile):
+                    self.profile = profile
+                    self.configureTableViewHeaderView(with: profile)
+                case .failure(let error):
+                    print(error.localizedDescription)
+                }
+                group.leave()
+            } 
+        //enter into other job and exit
+
+    3. Notify once the work is over
+        eg: group.notify(queue: .main) {
+                self.tableView.reloadData()
+            }   
+
 # Select image (PHPicker)
 
         var configuration = PHPickerConfiguration()
